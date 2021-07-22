@@ -16,5 +16,6 @@ jobs:
         script: |
           cd ChatBot
           git pull
+          npm i
           pm2 stop ChatBot
           pm2 start --name ChatBot index.js
