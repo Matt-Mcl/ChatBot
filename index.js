@@ -7,6 +7,9 @@ const port = 8000;
 
 app.get('/', (req, res) => res.send('Hello World!'));
 
+app.listen(port, () => console.log(`Express server running on port: ${port}`));
+
+
 async function test() {
     const response = await fetch('https://www.oracle.com/startup/faq/');
     const text = await response.text();
