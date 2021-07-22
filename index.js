@@ -1,11 +1,26 @@
 const fetch = require('node-fetch');
 const cheerio = require('cheerio');
 const express = require('express');
+const path = require('path');
 
 const app = express();
 const port = 8000;
 
-app.get('/', (req, res) => res.send('Hello World!'));
+let dict = {};
+
+app.get('/', function(req, res) {
+    res.sendFile(path.normalize(__dirname + '/static/index.html'));
+});
+
+app.use(express.urlencoded({
+    extended: true
+}))
+
+app.post('/results', (req, res) => {
+    const question = req.body.question
+    res.send(dict[question]);
+    res.end()
+  })
 
 app.listen(port, () => console.log(`Express server running on port: ${port}`));
 
@@ -15,12 +30,8 @@ async function test() {
     const text = await response.text();
     const $ = cheerio.load(text);
 
-    let dict = {};
-
     $('li > h5').each(function (i) {
         dict[$(this).text()] = $('li > div').eq(i + 10).html();
     });
-
-    console.log(dict['I have questions about my invoice. Who can I contact?']);
 }
 test();
