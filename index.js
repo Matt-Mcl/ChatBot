@@ -2,6 +2,7 @@ const fetch = require('node-fetch');
 const cheerio = require('cheerio');
 const express = require('express');
 const path = require('path');
+const Fuse = require('fuse.js');
 
 const app = express();
 const port = 8000;
@@ -17,15 +18,28 @@ app.use(express.urlencoded({
 }))
 
 app.post('/results', (req, res) => {
-    const question = req.body.question
-    res.send(dict[question]);
+    // Retrieve question from form and perform a fuzzy search
+    const question = req.body.question 
+    const options = {
+        isCaseSensitive: true,
+        includeScore: true,
+    }
+    const fuse = new Fuse(Object.keys(dict), options);
+
+    const results = fuse.search(question);
+
+    console.log('---------------------------------------------------');
+    console.log(results);
+    console.log('---------------------------------------------------');
+
+    res.send(dict[results[0].item]);
     res.end()
   })
 
 app.listen(port, () => console.log(`Express server running on port: ${port}`));
 
 
-async function test() {
+async function scrape() {
     const response = await fetch('https://www.oracle.com/startup/faq/');
     const text = await response.text();
     const $ = cheerio.load(text);
@@ -34,4 +48,4 @@ async function test() {
         dict[$(this).text()] = $('li > div').eq(i + 10).html();
     });
 }
-test();
+scrape();
