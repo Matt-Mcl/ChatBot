@@ -21,7 +21,7 @@ app.post('/results', (req, res) => {
     // Retrieve question from form and perform a fuzzy search
     const question = req.body.question 
     const options = {
-        isCaseSensitive: true,
+        isCaseSensitive: false,
         includeScore: true,
     }
     const fuse = new Fuse(Object.keys(dict), options);
