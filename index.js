@@ -32,7 +32,12 @@ app.post('/results', (req, res) => {
     console.log(results);
     console.log('---------------------------------------------------');
 
-    res.send(dict[results[0].item]);
+    try {
+        res.send(dict[results[0].item]);
+    } catch {
+        res.send('No questions related to query');
+    }
+    
     res.end()
   })
 
